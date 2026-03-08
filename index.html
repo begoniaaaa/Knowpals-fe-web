@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowpals - 网页版</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Knowpals 网页版</h1>
+            <div class="user-info" id="userInfo">
+                未登录 | <button id="loginBtn">模拟登录</button>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="logs-container">
+                <h3>操作日志</h3>
+                <ul id="logsList"></ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- 引入全局逻辑和工具函数 -->
+    <script src="./js/util.js"></script>
+    <script src="./js/app.js"></script>
+    <script>
+    // 页面初始化：加载日志、绑定登录事件
+    window.onload = function() {
+      // 1. 渲染日志列表
+      const logs = App.getGlobalData('logs') || [];
+      const logsList = document.getElementById('logsList');
+      logsList.innerHTML = logs.map(log => {
+        return `<li>${util.formatTime(new Date(log))}</li>`;
+      }).join('');
+
+      // 2. 绑定登录按钮事件
+      document.getElementById('loginBtn').addEventListener('click', function() {
+        App.login().then(userInfo => {
+          document.getElementById('userInfo').innerHTML = `
+            已登录：${userInfo.nickName} | <button id="logoutBtn">退出</button>
+          `;
+          // 绑定退出事件
+          document.getElementById('logoutBtn').addEventListener('click', () => {
+            App.logout();
+            location.reload(); // 刷新页面
+          });
+        });
+      });
+    };
+    </script>
+</body>
+</html>
